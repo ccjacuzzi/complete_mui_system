@@ -77,6 +77,18 @@ const EmployeeForm = () => {
                         label='Permanent Employee'
                         value={values.isPermanent}
                         onChange={handleInputChange}/>
+
+                    <div>
+                        <Controls.Button
+                        color='primary'
+                        size='large'
+                        text='Submit'
+                        type="submit" />
+
+                        <Controls.Button
+                        text='Reset'
+                        color='secondary' />
+                    </div>
                     
                 </Grid>
             </Grid>
