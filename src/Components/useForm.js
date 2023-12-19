@@ -6,6 +6,7 @@ import { makeStyles } from '@mui/styles';
 const useForm = (inititalFieldValues) => {
     
     const[values, setValues] = useState(inititalFieldValues);
+    const[errors, setErrors] = useState({});
 
     // e is the default event parameter
     // destructure the e.target into name and value
@@ -19,9 +20,15 @@ const useForm = (inititalFieldValues) => {
             [name]: value
         })
     }
+
+    const resetForm = ()=>{
+        setValues(inititalFieldValues);
+        setErrors({});
+        
+    }
     
     return {
-        values, setValues, handleInputChange
+        values, setValues, errors, setErrors, handleInputChange, resetForm
     } 
        
     
@@ -42,9 +49,10 @@ const useStyles = makeStyles({
 const Form = (props) => {
 
     const classes = useStyles();
+    const{ children, ...other } = props;
 
     return (
-        <form className={classes.root}>
+        <form className={classes.root} {...other}>
             {props.children}
         </form>
     );

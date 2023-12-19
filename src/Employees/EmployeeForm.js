@@ -22,7 +22,7 @@ const inititalFieldValues = {
     gender:'male',
     departmentId:'',
     hireDate:new Date(),
-    isPermanent:false,
+    isPermanent:false
 }
 
 
@@ -30,21 +30,69 @@ const inititalFieldValues = {
 
 const EmployeeForm = () => {
 
-    const{values, setValues, handleInputChange} = useForm(inititalFieldValues);    
+    const validate = () => {
+        let temp = {}
+        temp.fullName = values.fullName ? '': 'This field is required'
+        temp.email = (/^[^@\s]+@[^@\s]+\.[^@\s]+$/).test(values.email) ? '': 'Email is not valid'
+        temp.mobile = values.mobile.length > 9 ? '': 'Minimum 10 characters requried'
+        temp.departmentId = values.departmentId.length != 0 ? '': "You must select a department"
+        temp.city = values.city ? '': 'City is required'
+        setErrors({
+          ...temp  
+        })
+
+        // if every value in this object that is returned from the validate function is an empty string, the function will return true    
+        return Object.values(temp).every(x => x === '')
+        
+    }
+    
+    const{values, setValues,  errors, setErrors, handleInputChange, resetForm} = useForm(inititalFieldValues);
+       
+    const handleSubmit = (e) => {
+        e.preventDefault() //just used to prevent the form from reloading upon submit
+        if (validate()){
+            employeeServices.insertEmployee(values)
+            resetForm()
+        }
+    }
+    
 
     return (
 
-        <Form>
+        <Form onSubmit={handleSubmit}>
             <Grid container>
                 <Grid item xs={6}>
                     
-                    <Controls.Input label='Full Name' name='fullName' value={values.fullName} onChange={handleInputChange} />
+                    <Controls.Input
+                        label='Full Name'
+                        name='fullName'
+                        value={values.fullName}
+                        onChange={handleInputChange}
+                        error={errors.fullName}
+                    />
 
                     <Controls.Input
                         label='Email'
                         name='email'
                         value={values.email}
                         onChange={handleInputChange}
+                        error={errors.email}
+                    />
+
+                    <Controls.Input
+                        label='Mobile'
+                        name='mobile'
+                        value={values.mobile}
+                        onChange={handleInputChange}
+                        error={errors.mobile}
+                    />
+
+                    <Controls.Input
+                        label='City'
+                        name='city'
+                        value={values.city}
+                        onChange={handleInputChange}
+                        error={errors.city}
                     />
                 </Grid>
                 <Grid item xs={6}>
@@ -61,6 +109,7 @@ const EmployeeForm = () => {
                         name='departmentId'
                         label='Department'
                         value={values.departmentId}
+                        error={errors.departmentId}
                         onChange={handleInputChange}
                         options={employeeServices.getDepartmentCollection()} //This would likely be an api call to db
                     />
@@ -87,7 +136,8 @@ const EmployeeForm = () => {
 
                         <Controls.Button
                         text='Reset'
-                        color='secondary' />
+                        color='secondary'
+                        onClick={resetForm} />
                     </div>
                     
                 </Grid>

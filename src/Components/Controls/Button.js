@@ -26,7 +26,7 @@ const Button = (props) => {
             variant={variant || 'contained'}
             size={size || 'large'}
             color={color || 'primary'}
-            onClick={onclick}
+            onClick={onClick}
             {...other}>
             {text}
         </MuiButton>
