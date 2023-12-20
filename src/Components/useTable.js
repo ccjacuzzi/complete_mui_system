@@ -1,7 +1,7 @@
 import { Table, TableHead, TableRow, TableCell, TablePagination, TableSortLabel } from '@mui/material';
 import React, {useState} from 'react';
 
-const useTable = (records, headCells) => {
+const useTable = (records, headCells, filterFn) => {
 
     const pages = [5, 10, 25]
     const [page, setPage] = useState(0);
@@ -20,21 +20,24 @@ const useTable = (records, headCells) => {
 
         const handleSortRequest = cellId => {
             const isAsc = orderBy === cellId && order ==="asc";
-            setOrder(isAsc?'dec':'asc')
+            setOrder(isAsc?'desc':'asc')
             setOrderBy(cellId)
         }
 
         return (
-        <TableHead>
+        <TableHead style={props.style}>
                 <TableRow>
                     {
                         headCells.map(headCell => (
-                            <TableCell key={headCell.id}>
-                                <TableSortLabel
-                                direction = {orderBy === headCell.id ? order : 'asc'}
-                                onClick = { () => {handleSortRequest(headCell.id)}}>
-                                    {headCell.label}
-                                </TableSortLabel>
+                            <TableCell key={headCell.id}
+                            sortDirection={orderBy === headCell.id?order:false}>
+                                {headCell.disableSorting ? headCell.label :
+                                    <TableSortLabel
+                                        active={orderBy === headCell.id}
+                                        direction={orderBy === headCell.id ? order : 'asc'}
+                                        onClick={() => { handleSortRequest(headCell.id) }}>
+                                        {headCell.label}
+                                    </TableSortLabel>}
                             </TableCell>))
                     }
                 </TableRow>
@@ -60,13 +63,39 @@ const useTable = (records, headCells) => {
         onRowsPerPageChange = {handleRowsPerPage}
     />)
 
-    
+    function stableSort(array, comparator ){
+        const stabilizedThis = array.map((el, index) => [el, index]);
+        stabilizedThis.sort((a, b) => {
+            const order = comparator(a[0], b[0]);
+            if(order !== 0) return order;
+            return a[1] - b[1];
+        });
+        return stabilizedThis.map((el) => el[0]);
+    }
+
+    function getComparator(order, orderBy){
+        return order === 'desc'
+            ? (a, b) => descendingComparator(a,b, orderBy)
+            : (a, b) => -descendingComparator(a,b, orderBy)
+    }
+
+    function descendingComparator(a, b, orderBy){
+        if (b[orderBy] < a[orderBy]) {
+            return -1;
+        }
+        if(b[orderBy] > a[orderBy]){
+            return 1;
+        }
+        return 0;
+    }
+
     // Page has values 0,1,2,3,etc...
     // Rows per page can be 5, 10, 25
     // slice() takes starting array index and ending index
     // see "React Material UI Table with Paging Sorting and Filtering min 24:00"
     const recordsAfterPagingAndSorting = () => {
-        return records.slice(page*rowsPerPage,(page+1)*rowsPerPage)
+        return stableSort(filterFn.fn(records), getComparator(order, orderBy))
+        .slice(page*rowsPerPage,(page+1)*rowsPerPage)
     }
 
 

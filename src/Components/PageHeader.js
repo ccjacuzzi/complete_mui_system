@@ -6,7 +6,7 @@ import React from 'react';
 // pass thest objects into sx prop of mui components
 const styles = {
     root:{
-        backgroundColor:'pink'
+        backgroundColor:'#78909c'
     },
     pageHeaderDiv:{
         padding: '20px',
@@ -14,7 +14,7 @@ const styles = {
         display:'flex'
     },
     pageHeader:{
-        padding:'20px',
+        padding:'2px',
         margin:'20px'
     }    
 }
