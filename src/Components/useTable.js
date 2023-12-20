@@ -1,4 +1,4 @@
-import { Table, TableHead, TableRow, TableCell, TablePagination } from '@mui/material';
+import { Table, TableHead, TableRow, TableCell, TablePagination, TableSortLabel } from '@mui/material';
 import React, {useState} from 'react';
 
 const useTable = (records, headCells) => {
@@ -7,6 +7,8 @@ const useTable = (records, headCells) => {
     const [page, setPage] = useState(0);
 
     const [rowsPerPage, setRowsPerPerPage] = useState(pages[page])
+    const [order, setOrder] = useState()
+    const [orderBy, setOrderBy] = useState()
     
     const TblContainer = props => (
         <Table>
@@ -15,13 +17,24 @@ const useTable = (records, headCells) => {
     )
 
     const TblHead = props => {
+
+        const handleSortRequest = cellId => {
+            const isAsc = orderBy === cellId && order ==="asc";
+            setOrder(isAsc?'dec':'asc')
+            setOrderBy(cellId)
+        }
+
         return (
         <TableHead>
                 <TableRow>
                     {
                         headCells.map(headCell => (
                             <TableCell key={headCell.id}>
-                                {headCell.label}
+                                <TableSortLabel
+                                direction = {orderBy === headCell.id ? order : 'asc'}
+                                onClick = { () => {handleSortRequest(headCell.id)}}>
+                                    {headCell.label}
+                                </TableSortLabel>
                             </TableCell>))
                     }
                 </TableRow>
