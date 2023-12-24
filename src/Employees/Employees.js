@@ -1,14 +1,15 @@
 import React from 'react';
 import EmployeeForm from './EmployeeForm';
 import PageHeader from '../Components/PageHeader';
-import { PeopleOutlineTwoTone } from '@mui/icons-material';
-import { Paper, TableBody, TableRow, TableCell, InputAdornment } from '@mui/material';
+import { Delete, Edit, PeopleOutlineTwoTone } from '@mui/icons-material';
+import { Paper, TableBody, TableRow, TableCell, InputAdornment, listItemButtonClasses } from '@mui/material';
 import useTable from '../Components/useTable';
 import * as employeeService from '../services/employeeServices'
 import { useState } from 'react';
 import { Controls } from '../Components/Controls/Controls';
 import { Search, Add } from '@mui/icons-material';
 import Popup from '../Components/Popup';
+import ActionButton from '../Components/Controls/ActionButton';
 
 
 const styles ={
@@ -31,15 +32,17 @@ const styles ={
 }
 
 const headCells = [
-    {id: 'fullName', label:'Employee Name'},
-    {id: 'email', label:'Email'},
-    {id: 'mobile', label:'Mobile Number'},
-    {id: 'department', label:'Department', disableSorting:'true'}    
+    { id: 'fullName', label: 'Employee Name' },
+    { id: 'email', label: 'Email' },
+    { id: 'mobile', label: 'Mobile Number' },
+    { id: 'department', label: 'Department'},
+    { id: 'actions', label: 'Actions', disableSorting: 'true' }    
 ]
 
 const Employees = () => {
     
     const [records, setRecords] = useState(employeeService.getAllEmployees())
+    const [recordForEdit, setRecordForEdit] = useState(null)
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; }})
     const [openPopup, setOpenPopup] = useState(false);
 
@@ -61,6 +64,22 @@ const Employees = () => {
             }
         })
 
+    }
+
+    const addOrEdit = (employee, resetForm) => {
+        if (employee.id === 0)
+            employeeService.insertEmployee(employee)
+        else
+            employeeService.updateEmployee(employee)
+
+        resetForm()
+        setOpenPopup(false)
+        setRecords(employeeService.getAllEmployees())
+    }
+
+    const openInPopup = (item) => {
+        setRecordForEdit(item)
+        setOpenPopup(true)
     }
 
     return (
@@ -96,6 +115,16 @@ const Employees = () => {
                                         <TableCell>{item.email}</TableCell>
                                         <TableCell>{item.mobile}</TableCell>
                                         <TableCell>{item.department}</TableCell>
+                                        <TableCell>
+                                            <Controls.ActionButton>
+                                                <Edit 
+                                                    onClick={()=>{openInPopup(item)}}
+                                                />
+                                            </Controls.ActionButton>
+                                            <Controls.ActionButton>
+                                                <Delete />
+                                            </Controls.ActionButton>
+                                        </TableCell>
                                     </TableRow>
                                 )
                             )
@@ -109,7 +138,10 @@ const Employees = () => {
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}
             >
-                <EmployeeForm />
+                <EmployeeForm 
+                    addOrEdit={addOrEdit}
+                    recordForEdit={recordForEdit}
+                />
             </Popup>
             
         </>

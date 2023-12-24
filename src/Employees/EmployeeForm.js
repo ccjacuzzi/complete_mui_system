@@ -2,6 +2,7 @@ import {  Grid, TextField } from '@mui/material';
 import { useForm, Form } from '../Components/useForm';
 import { Controls } from '../Components/Controls/Controls';
 import * as employeeServices from '../services/employeeServices'; //importing everything from employeeServices file
+import { useEffect } from 'react';
 
 
 
@@ -28,7 +29,9 @@ const inititalFieldValues = {
 
 
 
-const EmployeeForm = () => {
+const EmployeeForm = (props) => {
+
+    const{ addOrEdit, recordForEdit } = props
 
     const validate = () => {
         let temp = {}
@@ -51,10 +54,16 @@ const EmployeeForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault() //just used to prevent the form from reloading upon submit
         if (validate()){
-            employeeServices.insertEmployee(values)
-            resetForm()
+            addOrEdit(values, resetForm)
         }
     }
+
+    useEffect(() => {
+        if (recordForEdit != null)
+            setValues({
+                ...recordForEdit
+            })
+    }, [recordForEdit])
     
 
     return (
