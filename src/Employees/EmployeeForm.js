@@ -49,7 +49,7 @@ const EmployeeForm = (props) => {
         
     }
     
-    const{values, setValues,  errors, setErrors, handleInputChange, resetForm} = useForm(inititalFieldValues);
+    const{values, setValues, errors, setErrors, handleInputChange, resetForm} = useForm(inititalFieldValues);
        
     const handleSubmit = (e) => {
         e.preventDefault() //just used to prevent the form from reloading upon submit
