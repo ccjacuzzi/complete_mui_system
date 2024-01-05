@@ -21,6 +21,7 @@ const styles = {
 
 
 const PageHeader = (props) => {
+    
     const {icon, title, subtitle} = props;    
     
     return (

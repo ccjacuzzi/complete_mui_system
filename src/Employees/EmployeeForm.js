@@ -31,8 +31,9 @@ const inititalFieldValues = {
 
 const EmployeeForm = (props) => {
 
-    const{ addOrEdit, recordForEdit } = props
+    const{ addOrEdit, recordForEdit } = props;
 
+    // Validation Specific to This Form
     const validate = () => {
         let temp = {}
         temp.fullName = values.fullName ? '': 'This field is required'
@@ -49,8 +50,10 @@ const EmployeeForm = (props) => {
         
     }
     
+    // Destructure the useForm custom React Hook. This includes state variables and functions to handle and control form-related operations.
     const{values, setValues, errors, setErrors, handleInputChange, resetForm} = useForm(inititalFieldValues);
        
+    
     const handleSubmit = (e) => {
         e.preventDefault() //just used to prevent the form from reloading upon submit
         if (validate()){
@@ -58,6 +61,8 @@ const EmployeeForm = (props) => {
         }
     }
 
+
+    // Use effect listens to the recordForEdit state variable
     useEffect(() => {
         if (recordForEdit != null)
             setValues({
